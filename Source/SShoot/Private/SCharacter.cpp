@@ -66,7 +66,7 @@ void ASCharacter::Look(const FInputActionValue& Value)
 
 void ASCharacter::BeginCrouch()
 {
-	Crouch();
+	Crouch(true);
 }
 
 void ASCharacter::EndCrouch()
@@ -97,10 +97,10 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 			EnhancedInputComponent->BindAction(IA_Look,ETriggerEvent::Triggered,this,&ASCharacter::Look);
 		}
 		
-		if (IA_Move)
+		if (IA_Crouch)
 		{
-			EnhancedInputComponent->BindAction(IA_Move,ETriggerEvent::Started,this,&ASCharacter::BeginCrouch);
-			EnhancedInputComponent->BindAction(IA_Move,ETriggerEvent::Completed,this,&ASCharacter::EndCrouch);
+			EnhancedInputComponent->BindAction(IA_Crouch,ETriggerEvent::Triggered,this,&ASCharacter::BeginCrouch);
+			EnhancedInputComponent->BindAction(IA_Crouch,ETriggerEvent::Completed,this,&ASCharacter::EndCrouch);
 		}
 	}
 
