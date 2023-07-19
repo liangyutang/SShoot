@@ -6,6 +6,9 @@
 #include "GameFramework/Character.h"
 #include "SCharacter.generated.h"
 
+class USpringArmComponent;
+class UCameraComponent;
+
 UCLASS()
 class SSHOOT_API ASCharacter : public ACharacter
 {
@@ -16,10 +19,20 @@ public:
 	ASCharacter();
 
 protected:
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Components")
+	USpringArmComponent* SpringArmComponent;
+	
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Components")
+	UCameraComponent* CameraComponent;
+	
+protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 	void Move(const struct FInputActionValue &Value);
+
+	void Look(const struct FInputActionValue &Value);
 
 public:	
 	// Called every frame
@@ -34,4 +47,7 @@ private:
 
 	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,Category="Input|Context",meta=(AllowPrivateAccess="true"))
 	class UInputAction* IA_Move;
+
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,Category="Input|Context",meta=(AllowPrivateAccess="true"))
+	class UInputAction* IA_Look;
 };
