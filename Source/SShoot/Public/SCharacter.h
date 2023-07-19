@@ -34,6 +34,10 @@ protected:
 
 	void Look(const struct FInputActionValue &Value);
 
+	void BeginCrouch();
+
+	void EndCrouch();
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -50,4 +54,7 @@ private:
 
 	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,Category="Input|Context",meta=(AllowPrivateAccess="true"))
 	class UInputAction* IA_Look;
+
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,Category="Input|Context",meta=(AllowPrivateAccess="true"))
+	class UInputAction* IA_Crouch;
 };

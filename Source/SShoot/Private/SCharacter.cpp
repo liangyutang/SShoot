@@ -5,6 +5,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
 #include "Camera/CameraComponent.h"
+#include "GameFramework/PawnMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 
 // Sets default values
@@ -20,7 +21,9 @@ ASCharacter::ASCharacter()
 	CameraComponent->SetupAttachment(SpringArmComponent);
 	//Rotation
 	CameraComponent->bUsePawnControlRotation=true;
-	
+
+	//开启蹲伏
+    ACharacter::GetMovementComponent()->GetNavAgentPropertiesRef().bCanCrouch=true;
 }
 
 // Called when the game starts or when spawned
@@ -61,6 +64,16 @@ void ASCharacter::Look(const FInputActionValue& Value)
 	}
 }
 
+void ASCharacter::BeginCrouch()
+{
+	Crouch();
+}
+
+void ASCharacter::EndCrouch()
+{
+	UnCrouch();
+}
+
 // Called every frame
 void ASCharacter::Tick(float DeltaTime)
 {
@@ -74,9 +87,21 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 	if(UEnhancedInputComponent* EnhancedInputComponent=CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
 	{
-		EnhancedInputComponent->BindAction(IA_Move,ETriggerEvent::Triggered,this,&ASCharacter::Move);
+		if (IA_Move)
+		{
+			EnhancedInputComponent->BindAction(IA_Move,ETriggerEvent::Triggered,this,&ASCharacter::Move);
+		}
 
-		EnhancedInputComponent->BindAction(IA_Look,ETriggerEvent::Triggered,this,&ASCharacter::Look);
+		if (IA_Look)
+		{
+			EnhancedInputComponent->BindAction(IA_Look,ETriggerEvent::Triggered,this,&ASCharacter::Look);
+		}
+		
+		if (IA_Move)
+		{
+			EnhancedInputComponent->BindAction(IA_Move,ETriggerEvent::Started,this,&ASCharacter::BeginCrouch);
+			EnhancedInputComponent->BindAction(IA_Move,ETriggerEvent::Completed,this,&ASCharacter::EndCrouch);
+		}
 	}
 
 }
