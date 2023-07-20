@@ -19,15 +19,19 @@ protected:
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Components")
 	USkeletalMeshComponent* MeshComponent;
 
-	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Weap")
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Weapon")
 	float Range;
-	
-	
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Weapon")
+	float Damage;
+
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category="Weapon")
+	TSubclassOf<UDamageType> DamageType;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	
-	UFUNCTION(BlueprintCallable,Category="Weap")
+	UFUNCTION(BlueprintCallable,Category="Weapon")
 	void OnFire();
 
 public:	
