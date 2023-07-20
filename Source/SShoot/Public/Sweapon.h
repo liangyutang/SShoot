@@ -18,11 +18,17 @@ public:
 protected:
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Components")
 	USkeletalMeshComponent* MeshComponent;
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Weap")
+	float Range;
+	
 	
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
+	
+	UFUNCTION(BlueprintCallable,Category="Weap")
+	void Fire();
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
