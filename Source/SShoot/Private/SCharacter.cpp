@@ -74,6 +74,15 @@ void ASCharacter::EndCrouch()
 	UnCrouch();
 }
 
+FVector ASCharacter::GetPawnViewLocation() const
+{
+	if (CameraComponent)
+	{
+		return CameraComponent->GetComponentLocation();
+	}
+	return Super::GetPawnViewLocation();
+}
+
 // Called every frame
 void ASCharacter::Tick(float DeltaTime)
 {

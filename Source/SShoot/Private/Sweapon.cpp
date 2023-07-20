@@ -15,7 +15,7 @@ ASweapon::ASweapon()
 	Range=10000.f;
 }
 
-void ASweapon::Fire()
+void ASweapon::OnFire()
 {
 	AActor* MyOwner=GetOwner();
 	if (MyOwner)

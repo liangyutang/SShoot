@@ -28,7 +28,8 @@ protected:
 	virtual void BeginPlay() override;
 	
 	UFUNCTION(BlueprintCallable,Category="Weap")
-	void Fire();
+	void OnFire();
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
