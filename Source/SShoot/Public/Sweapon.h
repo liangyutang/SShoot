@@ -42,7 +42,7 @@ protected:
 	virtual void BeginPlay() override;
 	
 	UFUNCTION(BlueprintCallable,Category="Weapon")
-	void OnFire();
+	virtual void OnFire();
 
 public:	
 	// Called every frame
