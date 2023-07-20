@@ -27,6 +27,16 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category="Weapon")
 	TSubclassOf<UDamageType> DamageType;
+
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category="Weapon")
+	UParticleSystem* MuzzleEffect;
+
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category="Weapon")
+	FName MuzzleSocketName;
+
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category="Weapon")
+	UParticleSystem* ImpactEffect;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

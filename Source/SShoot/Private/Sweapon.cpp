@@ -15,8 +15,8 @@ ASweapon::ASweapon()
 	RootComponent=MeshComponent;
 
 	Range=10000.f;
-
 	Damage=20.f;
+	MuzzleSocketName="MuzzleSocket";
 }
 
 void ASweapon::OnFire()
@@ -49,8 +49,15 @@ void ASweapon::OnFire()
 			FVector ShotDirection=EyeRotation.Vector();
 			
 			UGameplayStatics::ApplyPointDamage(HitActor,Damage,ShotDirection,Hit,MyOwner->GetInstigatorController(),this,DamageType);
+
+			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(),ImpactEffect,Hit.ImpactPoint,Hit.ImpactNormal.Rotation());
 		}
 		DrawDebugLine(GetWorld(),EyeLocation,TraceEnd,FColor::White,false,1.f,0,1.f);
+		//播放特效
+		if (MuzzleEffect)
+		{
+			UGameplayStatics::SpawnEmitterAttached(MuzzleEffect,MeshComponent,MuzzleSocketName);
+		}
 	}
 	
 }
