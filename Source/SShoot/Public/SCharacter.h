@@ -25,7 +25,21 @@ protected:
 	
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Components")
 	UCameraComponent* CameraComponent;
-	
+
+	//是否开启变焦推进
+	bool bWantsToZoom;
+
+	//变焦的视野范围
+	UPROPERTY(EditDefaultsOnly,Category="Player")
+	float ZoomFOV;
+
+	//初始视野范围
+	float DefaultFOV;
+
+	//变焦速度
+	UPROPERTY(EditDefaultsOnly,Category="Player",meta=(ClampMin=0.1,ClampMax=100))
+	float ZoomInterpSpeed;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -38,12 +52,16 @@ protected:
 
 	void EndCrouch();
 
+	void BeginZoom(const FInputActionValue& InputActionValue);
+	
+	void EndZoom(const FInputActionValue& InputActionValue);
+
 	virtual FVector GetPawnViewLocation() const override;
 
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
+	
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
@@ -59,4 +77,7 @@ private:
 
 	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,Category="Input|Context",meta=(AllowPrivateAccess="true"))
 	class UInputAction* IA_Crouch;
+
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,Category="Input|Context",meta=(AllowPrivateAccess="true"))
+	class UInputAction* IA_Zoom;
 };

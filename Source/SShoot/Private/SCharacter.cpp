@@ -24,14 +24,20 @@ ASCharacter::ASCharacter()
 
 	//开启蹲伏
     ACharacter::GetMovementComponent()->GetNavAgentPropertiesRef().bCanCrouch=true;
+
+	ZoomFOV=50.f;
+
+	ZoomInterpSpeed=20.;
 }
 
 // Called when the game starts or when spawned
 void ASCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	DefaultFOV=CameraComponent->FieldOfView;
 	
-	if (APlayerController* PlayerController=Cast<APlayerController>(GetController()))
+	if (const APlayerController* PlayerController=Cast<APlayerController>(GetController()))
 	{
 		if (UEnhancedInputLocalPlayerSubsystem *Subsystem=ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
 		{
@@ -74,6 +80,16 @@ void ASCharacter::EndCrouch()
 	UnCrouch();
 }
 
+void ASCharacter::BeginZoom(const FInputActionValue& InputActionValue)
+{
+	bWantsToZoom=true;
+}
+
+void ASCharacter::EndZoom(const FInputActionValue& InputActionValue)
+{
+	bWantsToZoom=false;
+}
+
 FVector ASCharacter::GetPawnViewLocation() const
 {
 	if (CameraComponent)
@@ -88,6 +104,10 @@ void ASCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	const float TargetFOV=bWantsToZoom?ZoomFOV:DefaultFOV;
+	const float NewFOV=FMath::FInterpTo(CameraComponent->FieldOfView,TargetFOV,DeltaTime,ZoomInterpSpeed);
+	CameraComponent->SetFieldOfView(NewFOV);
+	
 }
 
 // Called to bind functionality to input
@@ -110,6 +130,11 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 		{
 			EnhancedInputComponent->BindAction(IA_Crouch,ETriggerEvent::Triggered,this,&ASCharacter::BeginCrouch);
 			EnhancedInputComponent->BindAction(IA_Crouch,ETriggerEvent::Completed,this,&ASCharacter::EndCrouch);
+		}
+		if (IA_Zoom)
+		{
+			EnhancedInputComponent->BindAction(IA_Zoom,ETriggerEvent::Triggered,this,&ASCharacter::BeginZoom);
+			EnhancedInputComponent->BindAction(IA_Zoom,ETriggerEvent::Completed,this,&ASCharacter::EndZoom);
 		}
 	}
 
