@@ -4,6 +4,7 @@
 #include "Sweapon.h"
 
 #include "Kismet/GameplayStatics.h"
+#include "Particles/ParticleSystemComponent.h"
 
 //控制台debug显示控制
 static int32 DebugWeaponDrawing=0;
@@ -12,15 +13,13 @@ FAutoConsoleVariableRef CVARDebugWeaponDrawing(TEXT("COOP.DebugWeapons"),DebugWe
 // Sets default values
 ASweapon::ASweapon()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
-
 	MeshComponent=CreateDefaultSubobject<USkeletalMeshComponent>("MeshComponent");
 	RootComponent=MeshComponent;
 
 	Range=10000.f;
 	Damage=20.f;
 	MuzzleSocketName="MuzzleSocket";
+	TraceTargetName="Target";
 }
 
 void ASweapon::OnFire()
@@ -43,6 +42,8 @@ void ASweapon::OnFire()
 		QueryParams.bTraceComplex=true;
 		
 		FHitResult Hit;
+
+		TraceEndPoint=TraceEnd;
 		
 		if (GetWorld()->LineTraceSingleByChannel(Hit,EyeLocation,TraceEnd,ECC_Visibility,QueryParams))
 		{
@@ -53,33 +54,36 @@ void ASweapon::OnFire()
 			FVector ShotDirection=EyeRotation.Vector();
 			
 			UGameplayStatics::ApplyPointDamage(HitActor,Damage,ShotDirection,Hit,MyOwner->GetInstigatorController(),this,DamageType);
-
-			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(),ImpactEffect,Hit.ImpactPoint,Hit.ImpactNormal.Rotation());
+			if (ImpactEffect)
+			{
+				UGameplayStatics::SpawnEmitterAtLocation(GetWorld(),ImpactEffect,Hit.ImpactPoint,Hit.ImpactNormal.Rotation());
+			}
+			TraceEndPoint=Hit.ImpactPoint;
 		}
 		if (DebugWeaponDrawing>0)
 		{
 			DrawDebugLine(GetWorld(),EyeLocation,TraceEnd,FColor::White,false,1.f,0,1.f);
 		}
-		//播放特效
+		//播放开火特效
 		if (MuzzleEffect)
 		{
 			UGameplayStatics::SpawnEmitterAttached(MuzzleEffect,MeshComponent,MuzzleSocketName);
+		}
+		//创建发射特效
+		if (TraceEffect)
+		{
+			FVector MuzzleLocation=MeshComponent->GetSocketLocation(MuzzleSocketName);
+			if (UParticleSystemComponent* TraceComponent= UGameplayStatics::SpawnEmitterAtLocation(GetWorld(),TraceEffect,MuzzleLocation))
+			{
+				TraceComponent->SetVectorParameter(TraceTargetName,TraceEndPoint);
+			}
 		}
 	}
 	
 }
 
-// Called when the game starts or when spawned
-void ASweapon::BeginPlay()
+void ASweapon::PlayFireEffects()
 {
-	Super::BeginPlay();
 	
-}
-
-// Called every frame
-void ASweapon::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
 }
 

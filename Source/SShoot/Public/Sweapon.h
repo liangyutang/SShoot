@@ -37,15 +37,20 @@ protected:
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category="Weapon")
 	UParticleSystem* ImpactEffect;
 
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category="Weapon")
+	UParticleSystem* TraceEffect;
 	
+	FVector TraceEndPoint;
+
+	FName TraceTargetName;
+
+protected:
 	UFUNCTION(BlueprintCallable,Category="Weapon")
 	virtual void OnFire();
 
+	//播放开火时特效
+	void PlayFireEffects();
 public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+	
 
 };
