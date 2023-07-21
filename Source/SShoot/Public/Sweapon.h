@@ -42,8 +42,10 @@ protected:
 
 	FName TraceTargetName;
 
+	UPROPERTY(EditDefaultsOnly,Category="Weapon")
+	TSubclassOf<UCameraShakeBase> FireCamShake;
 protected:
-	//播放开火时特效
+	//播放开火相关特效
 	void PlayFireEffects(FVector EndPoint);
 	
 public:	

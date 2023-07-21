@@ -87,5 +87,13 @@ void ASweapon::PlayFireEffects(FVector EndPoint)
 			TraceComponent->SetVectorParameter(TraceTargetName,EndPoint);
 		}
 	}
+	//抖动效果
+	if (const APawn* MyOwner=Cast<APawn>(GetOwner()))
+	{
+		if (APlayerController *PC=Cast<APlayerController>(MyOwner->GetInstigatorController()))
+		{
+			PC->ClientStartCameraShake(FireCamShake);
+		}
+	}
 }
 
