@@ -35,18 +35,21 @@ protected:
 	FName MuzzleSocketName;
 
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category="Weapon")
-	UParticleSystem* ImpactEffect;
-
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category="Weapon")
 	UParticleSystem* TraceEffect;
 
 	FName TraceTargetName;
 
 	UPROPERTY(EditDefaultsOnly,Category="Weapon")
 	TSubclassOf<UCameraShakeBase> FireCamShake;
+
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category="Weapon")
+	UParticleSystem* DefaultImpactEffect;
+
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category="Weapon")
+	UParticleSystem* FleshImpactEffect;
 protected:
 	//播放开火相关特效
-	void PlayFireEffects(FVector EndPoint);
+	void PlayFireEffects(const FVector& EndPoint) const;
 	
 public:	
 	UFUNCTION(BlueprintCallable,Category="Weapon",meta=(AllowPrivateAccess="true"))

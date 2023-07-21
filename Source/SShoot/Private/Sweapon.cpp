@@ -5,6 +5,8 @@
 
 #include "Kismet/GameplayStatics.h"
 #include "Particles/ParticleSystemComponent.h"
+#include "PhysicalMaterials/PhysicalMaterial.h"
+#include "SShoot/SShoot.h"
 
 //控制台debug显示控制
 static int32 DebugWeaponDrawing=0;
@@ -40,6 +42,7 @@ void ASweapon::OnFire()
 		QueryParams.AddIgnoredActor(this);
 		//复杂追踪
 		QueryParams.bTraceComplex=true;
+		QueryParams.bReturnPhysicalMaterial=true;
 		
 		FHitResult Hit;
 
@@ -50,14 +53,31 @@ void ASweapon::OnFire()
 			//设置受阻，照成伤害效果
 			//打中的物体
 			AActor* HitActor=Hit.GetActor();
+			//获取击中的表面
+			EPhysicalSurface SurfaceType= UPhysicalMaterial::DetermineSurfaceType(Hit.PhysMaterial.Get());
 			//射击方位
 			FVector ShotDirection=EyeRotation.Vector();
-			
 			UGameplayStatics::ApplyPointDamage(HitActor,Damage,ShotDirection,Hit,MyOwner->GetInstigatorController(),this,DamageType);
-			if (ImpactEffect)
+
+			
+			UParticleSystem* SelectEffect=nullptr;
+			
+			switch (SurfaceType)
 			{
-				UGameplayStatics::SpawnEmitterAtLocation(GetWorld(),ImpactEffect,Hit.ImpactPoint,Hit.ImpactNormal.Rotation());
+			case SURFACE_FLESHDEFAULT :
+			case SURFACE_FLESHVULUERABLE :
+				SelectEffect=FleshImpactEffect;
+				break;
+			default:
+				SelectEffect=DefaultImpactEffect;
 			}
+
+			//击中特效
+			if (SelectEffect)
+			{
+				UGameplayStatics::SpawnEmitterAtLocation(GetWorld(),SelectEffect,Hit.ImpactPoint,Hit.ImpactNormal.Rotation());
+			}
+			
 			TraceEndPoint=Hit.ImpactPoint;
 		}
 		if (DebugWeaponDrawing>0)
@@ -71,7 +91,7 @@ void ASweapon::OnFire()
 	
 }
 
-void ASweapon::PlayFireEffects(FVector EndPoint)
+void ASweapon::PlayFireEffects(const FVector& EndPoint) const
 {
 	//播放开火特效
 	if (MuzzleEffect)
