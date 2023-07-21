@@ -7,8 +7,10 @@
 #include "Sweapon.h"
 #include "Blueprint/UserWidget.h"
 #include "Camera/CameraComponent.h"
+#include "Components/CapsuleComponent.h"
 #include "GameFramework/PawnMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "SShoot/SShoot.h"
 
 // Sets default values
 ASCharacter::ASCharacter()
@@ -26,6 +28,7 @@ ASCharacter::ASCharacter()
 
 	//开启蹲伏
     ACharacter::GetMovementComponent()->GetNavAgentPropertiesRef().bCanCrouch=true;
+	GetCapsuleComponent()->SetCollisionResponseToChannel(COLLISION_WEAPON,ECR_Ignore);
 
 	ZoomFOV=50.f;
 
