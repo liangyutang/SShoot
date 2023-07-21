@@ -5,6 +5,10 @@
 
 #include "Kismet/GameplayStatics.h"
 
+//控制台debug显示控制
+static int32 DebugWeaponDrawing=0;
+FAutoConsoleVariableRef CVARDebugWeaponDrawing(TEXT("COOP.DebugWeapons"),DebugWeaponDrawing,TEXT("Draw Debug Lines for Weapons"),ECVF_Cheat);
+
 // Sets default values
 ASweapon::ASweapon()
 {
@@ -52,7 +56,10 @@ void ASweapon::OnFire()
 
 			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(),ImpactEffect,Hit.ImpactPoint,Hit.ImpactNormal.Rotation());
 		}
-		DrawDebugLine(GetWorld(),EyeLocation,TraceEnd,FColor::White,false,1.f,0,1.f);
+		if (DebugWeaponDrawing>0)
+		{
+			DrawDebugLine(GetWorld(),EyeLocation,TraceEnd,FColor::White,false,1.f,0,1.f);
+		}
 		//播放特效
 		if (MuzzleEffect)
 		{
