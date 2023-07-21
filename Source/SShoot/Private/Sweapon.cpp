@@ -22,6 +22,14 @@ ASweapon::ASweapon()
 	Damage=20.f;
 	MuzzleSocketName="MuzzleSocket";
 	TraceTargetName="Target";
+	RateFire=600;
+	LastTimeFired=0.0f;
+}
+
+void ASweapon::BeginPlay()
+{
+	Super::BeginPlay();
+	TimeBetweenShots=60/RateFire;
 }
 
 void ASweapon::OnFire()
@@ -94,6 +102,7 @@ void ASweapon::OnFire()
 		PlayFireEffects(TraceEndPoint);
 	}
 	
+	LastTimeFired=GetWorld()->TimeSeconds;
 }
 
 void ASweapon::PlayFireEffects(const FVector& EndPoint) const
@@ -120,5 +129,17 @@ void ASweapon::PlayFireEffects(const FVector& EndPoint) const
 			PC->ClientStartCameraShake(FireCamShake);
 		}
 	}
+}
+
+void ASweapon::StartFire()
+{
+	//距离下次可开火的间隔
+	const float FirstDelay=FMath::Max(LastTimeFired+TimeBetweenShots-GetWorld()->TimeSeconds,0.0f);
+	GetWorldTimerManager().SetTimer(TimerHandle_TimeBetweenShots,this,&ASweapon::OnFire,TimeBetweenShots,true,FirstDelay);
+}
+
+void ASweapon::StopFire()
+{
+	GetWorldTimerManager().ClearTimer(TimerHandle_TimeBetweenShots);
 }
 

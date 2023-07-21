@@ -47,12 +47,32 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category="Weapon")
 	UParticleSystem* FleshImpactEffect;
+
+	FTimerHandle TimerHandle_TimeBetweenShots;
+
+	//开火速率，每分钟射出子弹的个数
+	UPROPERTY(EditDefaultsOnly,Category="Weapon")
+	float RateFire;
+
+	float LastTimeFired;
+
+	//开火间隔
+	float TimeBetweenShots;
+
 protected:
 	//播放开火相关特效
 	void PlayFireEffects(const FVector& EndPoint) const;
-	
-public:	
+
 	UFUNCTION(BlueprintCallable,Category="Weapon",meta=(AllowPrivateAccess="true"))
 	virtual void OnFire();
+
+	virtual void BeginPlay() override;
+	
+public:	
+	//设置自动开火(开火间隔)
+	void StartFire();
+
+	//停止自动开火
+	void StopFire();
 
 };

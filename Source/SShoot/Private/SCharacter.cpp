@@ -122,7 +122,15 @@ void ASCharacter::OnFire()
 {
 	if (CurrentWeapon)
 	{
-		CurrentWeapon->OnFire();
+		CurrentWeapon->StartFire();
+	}
+}
+
+void ASCharacter::StopFire()
+{
+	if (CurrentWeapon)
+	{
+		CurrentWeapon->StopFire();
 	}
 }
 
@@ -166,6 +174,7 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 		if (IA_Fire)
 		{
 			EnhancedInputComponent->BindAction(IA_Fire,ETriggerEvent::Started,this,&ASCharacter::OnFire);
+			EnhancedInputComponent->BindAction(IA_Fire,ETriggerEvent::Completed,this,&ASCharacter::StopFire);
 		}
 	}
 

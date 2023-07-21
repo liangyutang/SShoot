@@ -75,6 +75,8 @@ protected:
 	virtual FVector GetPawnViewLocation() const override;
 
 	void OnFire();
+
+	void StopFire();
 	
 
 public:	
