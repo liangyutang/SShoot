@@ -11,6 +11,7 @@ USHealthComponent::USHealthComponent()
 
 	DefaultHealth=100.f;
 	Health=DefaultHealth;
+	HealthComponent=this;
 	// ...
 }
 
@@ -23,7 +24,8 @@ void USHealthComponent::HandleTakeAnyDamage(AActor* DamagedActor, float Damage, 
 		return;
 	}
 	Health=FMath::Clamp(Health-Damage,0.0f,DefaultHealth);
-	UE_LOG(LogTemp,Log,TEXT("%f"),Health);
+	
+	OnHealthChanged.Broadcast(this,Health,Damage,DamageType,InstigatedBy,DamageCauser);
 }
 
 // Called when the game starts
