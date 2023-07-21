@@ -52,6 +52,10 @@ protected:
 	UPROPERTY(VisibleDefaultsOnly,Category="Player")
 	FName WeaponAttachSocketName;
 
+	//准心
+	UPROPERTY(EditDefaultsOnly,Category="Player")
+	TSubclassOf<UUserWidget> WBP_Cross;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

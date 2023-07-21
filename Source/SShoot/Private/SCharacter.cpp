@@ -5,6 +5,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
 #include "Sweapon.h"
+#include "Blueprint/UserWidget.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/PawnMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -47,6 +48,12 @@ void ASCharacter::BeginPlay()
 	{
 		CurrentWeapon->SetOwner(this);
 		CurrentWeapon->AttachToComponent(GetMesh(),FAttachmentTransformRules::SnapToTargetNotIncludingScale,WeaponAttachSocketName);
+	}
+
+	if (WBP_Cross)
+	{
+		UUserWidget* Widget=CreateWidget<UUserWidget>(GetWorld(),WBP_Cross);
+		Widget->AddToViewport();
 	}
 	
 	if (const APlayerController* PlayerController=Cast<APlayerController>(GetController()))
