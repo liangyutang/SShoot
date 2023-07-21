@@ -43,7 +43,7 @@ void ASweapon::OnFire()
 		
 		FHitResult Hit;
 
-		TraceEndPoint=TraceEnd;
+		FVector TraceEndPoint=TraceEnd;
 		
 		if (GetWorld()->LineTraceSingleByChannel(Hit,EyeLocation,TraceEnd,ECC_Visibility,QueryParams))
 		{
@@ -64,26 +64,28 @@ void ASweapon::OnFire()
 		{
 			DrawDebugLine(GetWorld(),EyeLocation,TraceEnd,FColor::White,false,1.f,0,1.f);
 		}
-		//播放开火特效
-		if (MuzzleEffect)
-		{
-			UGameplayStatics::SpawnEmitterAttached(MuzzleEffect,MeshComponent,MuzzleSocketName);
-		}
-		//创建发射特效
-		if (TraceEffect)
-		{
-			FVector MuzzleLocation=MeshComponent->GetSocketLocation(MuzzleSocketName);
-			if (UParticleSystemComponent* TraceComponent= UGameplayStatics::SpawnEmitterAtLocation(GetWorld(),TraceEffect,MuzzleLocation))
-			{
-				TraceComponent->SetVectorParameter(TraceTargetName,TraceEndPoint);
-			}
-		}
+
+		//特效
+		PlayFireEffects(TraceEndPoint);
 	}
 	
 }
 
-void ASweapon::PlayFireEffects()
+void ASweapon::PlayFireEffects(FVector EndPoint)
 {
-	
+	//播放开火特效
+	if (MuzzleEffect)
+	{
+		UGameplayStatics::SpawnEmitterAttached(MuzzleEffect,MeshComponent,MuzzleSocketName);
+	}
+	//创建发射特效
+	if (TraceEffect)
+	{
+		FVector MuzzleLocation=MeshComponent->GetSocketLocation(MuzzleSocketName);
+		if (UParticleSystemComponent* TraceComponent= UGameplayStatics::SpawnEmitterAtLocation(GetWorld(),TraceEffect,MuzzleLocation))
+		{
+			TraceComponent->SetVectorParameter(TraceTargetName,EndPoint);
+		}
+	}
 }
 

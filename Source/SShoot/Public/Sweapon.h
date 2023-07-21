@@ -39,18 +39,15 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category="Weapon")
 	UParticleSystem* TraceEffect;
-	
-	FVector TraceEndPoint;
 
 	FName TraceTargetName;
 
 protected:
-	UFUNCTION(BlueprintCallable,Category="Weapon")
-	virtual void OnFire();
-
 	//播放开火时特效
-	void PlayFireEffects();
-public:	
+	void PlayFireEffects(FVector EndPoint);
 	
+public:	
+	UFUNCTION(BlueprintCallable,Category="Weapon",meta=(AllowPrivateAccess="true"))
+	virtual void OnFire();
 
 };

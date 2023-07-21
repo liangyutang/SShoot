@@ -4,6 +4,7 @@
 #include "SShoot/Public/SCharacter.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
+#include "Sweapon.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/PawnMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -28,6 +29,8 @@ ASCharacter::ASCharacter()
 	ZoomFOV=50.f;
 
 	ZoomInterpSpeed=20.;
+
+	WeaponAttachSocketName="SweaponSocket";
 }
 
 // Called when the game starts or when spawned
@@ -36,6 +39,15 @@ void ASCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	DefaultFOV=CameraComponent->FieldOfView;
+
+	FActorSpawnParameters SpawnParameters;
+	SpawnParameters.SpawnCollisionHandlingOverride=ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	CurrentWeapon=GetWorld()->SpawnActor<ASweapon>(StarterWeaponClass,FVector::ZeroVector,FRotator::ZeroRotator,SpawnParameters);
+	if (CurrentWeapon)
+	{
+		CurrentWeapon->SetOwner(this);
+		CurrentWeapon->AttachToComponent(GetMesh(),FAttachmentTransformRules::SnapToTargetNotIncludingScale,WeaponAttachSocketName);
+	}
 	
 	if (const APlayerController* PlayerController=Cast<APlayerController>(GetController()))
 	{
@@ -99,6 +111,14 @@ FVector ASCharacter::GetPawnViewLocation() const
 	return Super::GetPawnViewLocation();
 }
 
+void ASCharacter::OnFire()
+{
+	if (CurrentWeapon)
+	{
+		CurrentWeapon->OnFire();
+	}
+}
+
 // Called every frame
 void ASCharacter::Tick(float DeltaTime)
 {
@@ -135,6 +155,10 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 		{
 			EnhancedInputComponent->BindAction(IA_Zoom,ETriggerEvent::Triggered,this,&ASCharacter::BeginZoom);
 			EnhancedInputComponent->BindAction(IA_Zoom,ETriggerEvent::Completed,this,&ASCharacter::EndZoom);
+		}
+		if (IA_Fire)
+		{
+			EnhancedInputComponent->BindAction(IA_Fire,ETriggerEvent::Started,this,&ASCharacter::OnFire);
 		}
 	}
 

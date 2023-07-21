@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "SCharacter.generated.h"
 
+class ASweapon;
 class USpringArmComponent;
 class UCameraComponent;
 
@@ -40,6 +41,17 @@ protected:
 	UPROPERTY(EditDefaultsOnly,Category="Player",meta=(ClampMin=0.1,ClampMax=100))
 	float ZoomInterpSpeed;
 
+	//当前携带的武器
+	UPROPERTY()
+	ASweapon* CurrentWeapon;
+
+	//生成武器的类
+	UPROPERTY(EditDefaultsOnly,Category="Player")
+	TSubclassOf<ASweapon> StarterWeaponClass;
+
+	UPROPERTY(VisibleDefaultsOnly,Category="Player")
+	FName WeaponAttachSocketName;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -57,6 +69,9 @@ protected:
 	void EndZoom(const FInputActionValue& InputActionValue);
 
 	virtual FVector GetPawnViewLocation() const override;
+
+	void OnFire();
+	
 
 public:	
 	// Called every frame
@@ -80,4 +95,7 @@ private:
 
 	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,Category="Input|Context",meta=(AllowPrivateAccess="true"))
 	class UInputAction* IA_Zoom;
+
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,Category="Input|Context",meta=(AllowPrivateAccess="true"))
+	class UInputAction* IA_Fire;
 };
