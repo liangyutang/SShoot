@@ -48,16 +48,21 @@ void ASweapon::OnFire()
 
 		FVector TraceEndPoint=TraceEnd;
 		
-		if (GetWorld()->LineTraceSingleByChannel(Hit,EyeLocation,TraceEnd,ECC_Visibility,QueryParams))
+		if (GetWorld()->LineTraceSingleByChannel(Hit,EyeLocation,TraceEnd,COLLISION_WEAPON,QueryParams))
 		{
 			//设置受阻，照成伤害效果
 			//打中的物体
 			AActor* HitActor=Hit.GetActor();
 			//获取击中的表面
 			EPhysicalSurface SurfaceType= UPhysicalMaterial::DetermineSurfaceType(Hit.PhysMaterial.Get());
+			float ActualDamage=Damage;
+			if (SurfaceType==SURFACE_FLESHVULUERABLE)
+			{
+				ActualDamage=Damage*5;
+			}
 			//射击方位
 			FVector ShotDirection=EyeRotation.Vector();
-			UGameplayStatics::ApplyPointDamage(HitActor,Damage,ShotDirection,Hit,MyOwner->GetInstigatorController(),this,DamageType);
+			UGameplayStatics::ApplyPointDamage(HitActor,ActualDamage,ShotDirection,Hit,MyOwner->GetInstigatorController(),this,DamageType);
 
 			
 			UParticleSystem* SelectEffect=nullptr;
